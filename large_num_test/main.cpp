@@ -47,20 +47,19 @@ int main(int argc, const char * argv[]) {
 	PRINT_MAT2(trg.block(0,0,10,1),"logsumexp");
 	
 	//lVector and lMatrix
-//	lVector lp(p);
-//	lVector lu(u);
-//	lMatrix lK(K);
-//	lVector ltrg;
-//	start = clock();
-//	ltrg = quotient(lp,(lK * lu));
+	lVector lp(p);
+	lVector lu(u);
+	lMatrix lK(K);
+	lVector ltrg;
+	lVector lKu;
+	start = clock();
+//	lKu = lK * lu;
+//	ltrg = lp.quotient(lKu);
 //	trg = asVector(ltrg);
 //	trg = trg.array().log();
-//	end = clock();
-//	cout << "time = " << (float)(end - start) / CLOCKS_PER_SEC << "sec.\n";
-//	PRINT_MAT2(trg.block(0,0,10,1),"simple");
-	
-	lvect_demo();
-	
+	end = clock();
+	cout << "time = " << (float)(end - start) / CLOCKS_PER_SEC << "sec.\n";
+	PRINT_MAT2(trg.block(0,0,10,1),"lnum");
 	
 	return 0;
 }

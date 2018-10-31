@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		83F98C5221898C1F006432BB /* large_num_test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = large_num_test; sourceTree = BUILT_PRODUCTS_DIR; };
 		83F98C5521898C1F006432BB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		83F98C5C21898C8A006432BB /* lnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lnum.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				83F98C5521898C1F006432BB /* main.cpp */,
+				83F98C5C21898C8A006432BB /* lnum.h */,
 			);
 			path = large_num_test;
 			sourceTree = "<group>";
@@ -240,6 +242,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = /usr/local/include/eigen3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -248,6 +251,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = /usr/local/include/eigen3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

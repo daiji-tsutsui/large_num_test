@@ -145,8 +145,10 @@ inline int speed_test2(int dim, int itrNum) {
 		start = clock();
 		for(int i = 0; i < itrNum; ++i){
 			lKu = lK * lu;
+//			lKu = lu;
 			lv = lp.quotient(lKu);
 			lKv = lv * lK;
+//			lKv = lv;
 			lu = lq.quotient(lKv);
 		}
 		trg = lu.asLogVector();

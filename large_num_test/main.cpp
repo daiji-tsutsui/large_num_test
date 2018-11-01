@@ -91,7 +91,7 @@ inline int speed_test2(int dim, int itrNum) {
 	VectorXd trg;
 	clock_t start, end;
 
-	//Simple calculation
+	/* Simple calculation */
 	u = iniu;
 	start = clock();
 	for(int i = 0; i < itrNum; ++i){
@@ -104,51 +104,58 @@ inline int speed_test2(int dim, int itrNum) {
 	cout << "time = " << (float)(end - start) / CLOCKS_PER_SEC << "sec.\n";
 	PRINT_MAT2(trg.block(0,0,10,1),"simple");
 
-	//LogSumExp
-	u = iniu;
-	VectorXd log_u = u.array().log();
-	VectorXd log_v;
-	MatrixXd log_Ku, log_Kv;
-	VectorXd dom_Ku;
-	RowVectorXd dom_Kv;
-	VectorXd sub_Ku;
-	RowVectorXd sub_Kv;
-	start = clock();
-	for(int i = 0; i < itrNum; ++i){
-		log_Ku = log_K.rowwise() + log_u.transpose();
-		dom_Ku = log_Ku.rowwise().maxCoeff();
-		sub_Ku = ((log_Ku.colwise() - dom_Ku).array().exp()).rowwise().sum();
-		log_v = log_p.array() - sub_Ku.array().log() - dom_Ku.array();
-		log_Kv = log_K.colwise() + log_v;
-		dom_Kv = log_Kv.colwise().maxCoeff();
-		sub_Kv = ((log_Kv.rowwise() - dom_Kv).array().exp()).colwise().sum();
-		log_u = log_q.array() - sub_Kv.array().log().transpose() - dom_Kv.array().transpose();
+	/* LogSumExp */
+	if(0){
+		u = iniu;
+		VectorXd log_u = u.array().log();
+		VectorXd log_v;
+		MatrixXd log_Ku, log_Kv;
+		VectorXd dom_Ku;
+		RowVectorXd dom_Kv;
+		VectorXd sub_Ku;
+		RowVectorXd sub_Kv;
+		start = clock();
+		for(int i = 0; i < itrNum; ++i){
+			log_Ku = log_K.rowwise() + log_u.transpose();
+			dom_Ku = log_Ku.rowwise().maxCoeff();
+			sub_Ku = ((log_Ku.colwise() - dom_Ku).array().exp()).rowwise().sum();
+			log_v = log_p.array() - sub_Ku.array().log() - dom_Ku.array();
+			log_Kv = log_K.colwise() + log_v;
+			dom_Kv = log_Kv.colwise().maxCoeff();
+			sub_Kv = ((log_Kv.rowwise() - dom_Kv).array().exp()).colwise().sum();
+			log_u = log_q.array() - sub_Kv.array().log().transpose() - dom_Kv.array().transpose();
+		}
+		trg = log_u.array() - log_u(dim-1);
+		end = clock();
+		cout << "time = " << (float)(end - start) / CLOCKS_PER_SEC << "sec.\n";
+		PRINT_MAT2(trg.block(0,0,10,1),"logsumexp");
 	}
-	trg = log_u.array() - log_u(dim-1);
-	end = clock();
-	cout << "time = " << (float)(end - start) / CLOCKS_PER_SEC << "sec.\n";
-	PRINT_MAT2(trg.block(0,0,10,1),"logsumexp");
 
-//	//lVector and lMatrix
-	u = iniu;
-	lVector lp(p);
-	lVector lq(q);
-	lVector lu(u);
-	lVector lv;
-	lMatrix lK(K);
-	lVector lKu, lKv;
-	start = clock();
-	for(int i = 0; i < itrNum; ++i){
-		lKu = lK * lu;
-		lv = lp.quotient(lKu);
-		lKv = lv * lK;
-		lu = lq.quotient(lKv);
+	/* lVector and lMatrix */ 
+	if(1){
+		u = iniu;
+		lVector lp(p);
+		lVector lq(q);
+		lVector lu(u);
+		lVector lv;
+//		lVector lv(u);
+		lMatrix lK(K);
+		lVector lKu, lKv;
+		start = clock();
+		for(int i = 0; i < itrNum; ++i){
+//			lKu = lK * lu;
+			lKu = lu;
+			lv = lp.quotient(lKu);
+//			lKv = lv * lK;
+			lKv = lv;
+			lu = lq.quotient(lKv);
+		}
+		trg = lu.asLogVector();
+		trg = trg.array() - trg(dim-1);
+		end = clock();
+		cout << "time = " << (float)(end - start) / CLOCKS_PER_SEC << "sec.\n";
+		PRINT_MAT2(trg.block(0,0,10,1),"lnum");
 	}
-	trg = lu.asLogVector();
-	trg = trg.array() - trg(dim-1);
-	end = clock();
-	cout << "time = " << (float)(end - start) / CLOCKS_PER_SEC << "sec.\n";
-	PRINT_MAT2(trg.block(0,0,10,1),"lnum");
 
 	return 0;
 }

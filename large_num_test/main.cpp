@@ -10,6 +10,8 @@
 #include <time.h>
 using namespace std;
 using namespace Eigen;
+#define LOGSUMEXP	0
+#define LNUM		1
 int speed_test1(int dim);
 int speed_test2(int dim, int itrNum);
 
@@ -105,7 +107,7 @@ inline int speed_test2(int dim, int itrNum) {
 	PRINT_MAT2(trg.block(0,0,10,1),"simple");
 
 	/* LogSumExp */
-	if(0){
+	if(LOGSUMEXP){
 		u = iniu;
 		VectorXd log_u = u.array().log();
 		VectorXd log_v;
@@ -131,14 +133,13 @@ inline int speed_test2(int dim, int itrNum) {
 		PRINT_MAT2(trg.block(0,0,10,1),"logsumexp");
 	}
 
-	/* lVector and lMatrix */ 
-	if(1){
+	/* lVector and lMatrix */
+	if(LNUM){
 		u = iniu;
 		lVector lp(p);
 		lVector lq(q);
 		lVector lu(u);
 		lVector lv;
-//		lVector lv(u);
 		lMatrix lK(K);
 		lVector lKu, lKv;
 		start = clock();
@@ -146,7 +147,7 @@ inline int speed_test2(int dim, int itrNum) {
 //			lKu = lK * lu;
 			lKu = lu;
 			lv = lp.quotient(lKu);
-//			lKv = lv * lK;
+			lKv = lv * lK;
 			lKv = lv;
 			lu = lq.quotient(lKv);
 		}

@@ -17,7 +17,7 @@ int main(int argc, const char * argv[]) {
 	//Initialize
 	srand((unsigned int)time(NULL));
 	
-	speed_test2(100,100);
+	speed_test2(1000,1000);
 	
 	return 0;
 }

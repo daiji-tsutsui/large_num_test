@@ -25,6 +25,8 @@ public:
 	
 	lVector();
 	lVector(const VectorXd d);
+	lVector quotient(const lVector src);
+	VectorXd asVector();
 	lVector& operator = (const lVector& src);
 };
 
@@ -32,6 +34,21 @@ lVector::lVector(){}
 lVector::lVector(const VectorXd d){
 	exponent = d.array().log().cast<int>();
 	coeff = d.array() / exponent.cast<double>().array().exp();
+}
+lVector lVector::quotient(const lVector src){
+	lVector trg;
+	
+	VectorXi quot_exp = exponent - src.exponent;
+	VectorXd quot_coeff = coeff.array() / src.coeff.array();
+	VectorXi moveup = quot_coeff.array().log().cast<int>();
+	trg.exponent = quot_exp + moveup;
+	trg.coeff = quot_coeff.array() / moveup.cast<double>().array().exp();
+	
+	return trg;
+}
+VectorXd lVector::asVector(){
+	VectorXd trg = coeff.array() * (exponent.cast<double>()).array().exp();
+	return trg;
 }
 lVector& lVector::operator = (const lVector& src){
 	exponent = src.exponent;
@@ -120,6 +137,21 @@ int lvect_prod_demo(){
 	lu = la * lv;
 	VectorXd u = lu.coeff.array() * (lu.exponent.cast<double>()).array().exp();
 	PRINT_MAT(u);
+	return 0;
+}
+
+int lvect_quot_demo(){
+	VectorXd v(3); v << 1.5,4,9;
+	VectorXd u(3); u << 1,2,3;
+	lVector lv(v);
+	lVector lu(u);
+	
+	lVector lw;
+	lw = lv.quotient(lu);
+	VectorXd w = lw.coeff.array() * (lw.exponent.cast<double>()).array().exp();
+	PRINT_MAT2(lv.asVector(),"v");
+	PRINT_MAT2(lu.asVector(),"u");
+	PRINT_MAT2(w,"v.array()/u.array()");
 	return 0;
 }
 

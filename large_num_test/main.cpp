@@ -62,7 +62,7 @@ int main(int argc, const char * argv[]) {
 	PRINT_MAT2(trg.block(0,0,10,1),"lnum");
 	
 //	lvect_demo();
-	lvect_prod_demo();
+	lvect_quot_demo();
 	
 	return 0;
 }

@@ -18,6 +18,8 @@ using namespace Eigen;
 #ifndef ldouble_h
 #define ldouble_h
 
+class lMatrix;
+
 class lVector {
 public:
 	VectorXi exponent;
@@ -29,6 +31,18 @@ public:
 	VectorXd asVector();
 	VectorXd asLogVector();
 	lVector& operator = (const lVector& src);
+	lVector operator * (const lMatrix& src);
+};
+
+class lMatrix {
+public:
+	MatrixXi exponent;
+	MatrixXd coeff;
+	
+	lMatrix();
+	lMatrix(const MatrixXd d);
+	lVector operator * (const lVector& src);
+	lMatrix& operator = (const lMatrix& src);
 };
 
 lVector::lVector(){}
@@ -65,17 +79,26 @@ lVector& lVector::operator = (const lVector& src){
 	coeff = src.coeff;
 	return *this;
 }
-
-class lMatrix {
-public:
-	MatrixXi exponent;
-	MatrixXd coeff;
+lVector lVector::operator * (const lMatrix& src){
+	lVector trg;
 	
-	lMatrix();
-	lMatrix(const MatrixXd d);
-	lVector operator * (const lVector& src);
-	lMatrix& operator = (const lMatrix& src);
-};
+	//colwise product
+	VectorXd d_exp = exponent.cast<double>();
+	MatrixXd d_exp_src = src.exponent.cast<double>();
+	MatrixXd prod_exp = d_exp_src.colwise() + d_exp;
+	MatrixXd prod_coeff = src.coeff.array().colwise() * coeff.array();
+	//	MatrixXi moveup = prod_coeff.array().log().cast<int>();
+	//	prod_exp += moveup.cast<double>();
+	//	prod_coeff = prod_coeff.array() / moveup.cast<double>().array().exp();
+	
+	//sum-up rowwisely to compute matrix multiply
+	RowVectorXd max_exp = prod_exp.colwise().maxCoeff();
+	MatrixXd weights = (prod_exp.rowwise() - max_exp).array().exp();
+	trg.exponent = max_exp.cast<int>();
+	trg.coeff = (prod_coeff.array() * weights.array()).colwise().sum().transpose();
+	
+	return trg;
+}
 
 lMatrix::lMatrix(){}
 lMatrix::lMatrix(const MatrixXd d){
@@ -90,7 +113,7 @@ lVector lMatrix::operator * (const lVector& src){
 	VectorXd d_exp_src = src.exponent.cast<double>();
 	MatrixXd prod_exp = d_exp.rowwise() + d_exp_src.transpose();
 	MatrixXd prod_coeff = coeff.array().rowwise() * src.coeff.array().transpose();
-//	MatrixXi moveup = coeff.array().log().cast<int>();
+//	MatrixXi moveup = prod_coeff.array().log().cast<int>();
 //	prod_exp += moveup.cast<double>();
 //	prod_coeff = prod_coeff.array() / moveup.cast<double>().array().exp();
 

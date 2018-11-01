@@ -100,8 +100,8 @@ inline lVector lMatrix::operator * (const lVector& src){
 	lVector trg;
 	
 	//rowwise product
-	MatrixXd prod_exp = (exponent.transpose().colwise() + src.exponent).transpose();
-	MatrixXd prod_coeff = (coeff.array().transpose().colwise() * src.coeff.array()).transpose();
+	MatrixXd prod_exp = exponent.rowwise() + src.exponent.transpose();
+	MatrixXd prod_coeff = coeff.array().rowwise() * src.coeff.array().transpose();
 	
 	//sum-up rowwisely to compute matrix multiply
 	trg.exponent = prod_exp.rowwise().maxCoeff();

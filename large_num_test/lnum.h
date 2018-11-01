@@ -22,7 +22,7 @@ class lMatrix;
 
 class lVector {
 public:
-	VectorXi exponent;
+	VectorXd exponent;
 	VectorXd coeff;
 	
 	lVector();
@@ -36,7 +36,7 @@ public:
 
 class lMatrix {
 public:
-	MatrixXi exponent;
+	MatrixXd exponent;
 	MatrixXd coeff;
 	
 	lMatrix();
@@ -47,8 +47,8 @@ public:
 
 lVector::lVector(){}
 lVector::lVector(const VectorXd d){
-	exponent = d.array().log().cast<int>();
-	coeff = d.array() / exponent.cast<double>().array().exp();
+	exponent = d.array().log();
+	coeff = d.array() / exponent.array().exp();
 }
 inline lVector lVector::quotient(const lVector src){
 	lVector trg;
@@ -67,11 +67,11 @@ inline lVector lVector::quotient(const lVector src){
 	return trg;
 }
 inline VectorXd lVector::asVector(){
-	VectorXd trg = coeff.array() * (exponent.cast<double>()).array().exp();
+	VectorXd trg = coeff.array() * exponent.array().exp();
 	return trg;
 }
 inline VectorXd lVector::asLogVector(){
-	VectorXd trg = coeff.array().log() + (exponent.cast<double>()).array();
+	VectorXd trg = coeff.array().log() + exponent.array();
 	return trg;
 }
 inline lVector& lVector::operator = (const lVector& src){
@@ -83,27 +83,25 @@ inline lVector lVector::operator * (const lMatrix& src){
 	lVector trg;
 	
 	//colwise product
-	VectorXd d_exp = exponent.cast<double>();
-	MatrixXd d_exp_src = src.exponent.cast<double>();
-//	MatrixXd prod_exp = d_exp_src.colwise() + d_exp;
-//	MatrixXd prod_coeff = src.coeff.array().colwise() * coeff.array();
-//	//	MatrixXi moveup = prod_coeff.array().log().cast<int>();
-//	//	prod_exp += moveup.cast<double>();
-//	//	prod_coeff = prod_coeff.array() / moveup.cast<double>().array().exp();
-//
-//	//sum-up rowwisely to compute matrix multiply
-//	RowVectorXd max_exp = prod_exp.colwise().maxCoeff();
-//	MatrixXd weights = (prod_exp.rowwise() - max_exp).array().exp();
-//	trg.exponent = max_exp.cast<int>();
-//	trg.coeff = (prod_coeff.array() * weights.array()).colwise().sum().transpose();
+	MatrixXd prod_exp = src.exponent.colwise() + exponent;
+	MatrixXd prod_coeff = src.coeff.array().colwise() * coeff.array();
+	//	MatrixXi moveup = prod_coeff.array().log().cast<int>();
+	//	prod_exp += moveup.cast<double>();
+	//	prod_coeff = prod_coeff.array() / moveup.cast<double>().array().exp();
+
+	//sum-up rowwisely to compute matrix multiply
+	RowVectorXd max_exp = prod_exp.colwise().maxCoeff();
+	MatrixXd weights = (prod_exp.rowwise() - max_exp).array().exp();
+	trg.exponent = max_exp;
+	trg.coeff = (prod_coeff.array() * weights.array()).colwise().sum().transpose();
 	
 	return trg;
 }
 
 lMatrix::lMatrix(){}
 lMatrix::lMatrix(const MatrixXd d){
-	exponent = d.array().log().cast<int>();
-	coeff = d.array() / exponent.cast<double>().array().exp();
+	exponent = d.array().log();
+	coeff = d.array() / exponent.array().exp();
 }
 inline lMatrix& lMatrix::operator = (const lMatrix& src){
 	exponent = src.exponent;
@@ -114,9 +112,7 @@ inline lVector lMatrix::operator * (const lVector& src){
 	lVector trg;
 	
 	//rowwise product
-	MatrixXd d_exp = exponent.cast<double>();
-	VectorXd d_exp_src = src.exponent.cast<double>();
-	MatrixXd prod_exp = d_exp.rowwise() + d_exp_src.transpose();
+	MatrixXd prod_exp = exponent.rowwise() + src.exponent.transpose();
 	MatrixXd prod_coeff = coeff.array().rowwise() * src.coeff.array().transpose();
 	//	MatrixXi moveup = prod_coeff.array().log().cast<int>();
 	//	prod_exp += moveup.cast<double>();
@@ -125,7 +121,7 @@ inline lVector lMatrix::operator * (const lVector& src){
 	//sum-up rowwisely to compute matrix multiply
 	VectorXd max_exp = prod_exp.rowwise().maxCoeff();
 	MatrixXd weights = (prod_exp.colwise() - max_exp).array().exp();
-	trg.exponent = max_exp.cast<int>();
+	trg.exponent = max_exp;
 	trg.coeff = (prod_coeff.array() * weights.array()).rowwise().sum();
 	
 	return trg;

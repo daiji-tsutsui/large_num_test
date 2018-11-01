@@ -78,9 +78,10 @@ inline lVector lVector::operator * (const lMatrix& src){
 	MatrixXd prod_exp; prod_exp = src.exponent.colwise() + exponent;
 	MatrixXd prod_coeff; prod_coeff = src.coeff.array().colwise() * coeff.array();
 
-	//sum-up rowwisely to compute matrix multiply
-	trg.exponent = prod_exp.colwise().maxCoeff().transpose();
-	MatrixXd weights; weights = (prod_exp.rowwise() - trg.exponent.transpose()).array().exp();
+	//sum-up colwisely to compute matrix multiply
+	RowVectorXd max_exp; max_exp = prod_exp.colwise().maxCoeff();
+	MatrixXd weights; weights = (prod_exp.rowwise() - max_exp).array().exp();
+	trg.exponent = max_exp.transpose();
 	trg.coeff = (prod_coeff.array() * weights.array()).colwise().sum().transpose();
 	
 	return trg;
@@ -104,8 +105,9 @@ inline lVector lMatrix::operator * (const lVector& src){
 	MatrixXd prod_coeff; prod_coeff = coeff.array().rowwise() * src.coeff.array().transpose();
 	
 	//sum-up rowwisely to compute matrix multiply
-	trg.exponent = prod_exp.rowwise().maxCoeff();
-	MatrixXd weights; weights = (prod_exp.colwise() - trg.exponent).array().exp();
+	VectorXd max_exp; max_exp = prod_exp.rowwise().maxCoeff();
+	MatrixXd weights; weights = (prod_exp.colwise() - max_exp).array().exp();
+	trg.exponent = max_exp;
 	trg.coeff = (prod_coeff.array() * weights.array()).rowwise().sum();
 	
 	return trg;

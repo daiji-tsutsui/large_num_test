@@ -10,7 +10,7 @@
 #include <time.h>
 using namespace std;
 using namespace Eigen;
-#define LOGSUMEXP	0
+#define LOGSUMEXP	1
 #define LNUM		1
 int speed_test1(int dim);
 int speed_test2(int dim, int itrNum);
@@ -145,10 +145,8 @@ inline int speed_test2(int dim, int itrNum) {
 		start = clock();
 		for(int i = 0; i < itrNum; ++i){
 			lKu = lK * lu;
-//			lKu = lu;
 			lv = lp.quotient(lKu);
 			lKv = lv * lK;
-//			lKv = lv;
 			lu = lq.quotient(lKv);
 		}
 		trg = lu.asLogVector();

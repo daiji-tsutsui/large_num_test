@@ -70,7 +70,7 @@ int speed_test1(int dim) {
 	return 0;
 }
 
-int speed_test2(int dim, int itrNum) {
+inline int speed_test2(int dim, int itrNum) {
 	//
 	// Speed-check for Sinkhorn algorithm.
 	//

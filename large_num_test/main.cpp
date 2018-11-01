@@ -55,11 +55,14 @@ int main(int argc, const char * argv[]) {
 	start = clock();
 //	lKu = lK * lu;
 //	ltrg = lp.quotient(lKu);
-//	trg = asVector(ltrg);
+//	trg = ltrg.asVector();
 //	trg = trg.array().log();
 	end = clock();
 	cout << "time = " << (float)(end - start) / CLOCKS_PER_SEC << "sec.\n";
 	PRINT_MAT2(trg.block(0,0,10,1),"lnum");
+	
+//	lvect_demo();
+	lvect_prod_demo();
 	
 	return 0;
 }

@@ -12,6 +12,9 @@ using namespace std;
 using namespace Eigen;
 
 int main(int argc, const char * argv[]) {
+	//Initialize
+	srand((unsigned int)time(NULL));
+	
 	int dim = 1000;
 	VectorXd log_p = VectorXd::Random(dim);
 	VectorXd p = log_p.array().exp();
@@ -21,9 +24,6 @@ int main(int argc, const char * argv[]) {
 	MatrixXd K = log_K.array().exp();
 	VectorXd trg;
 	clock_t start, end;
-	
-	//Initialize
-	srand((unsigned int)time(NULL));
 	
 	//Simple calculation
 	start = clock();
@@ -53,16 +53,16 @@ int main(int argc, const char * argv[]) {
 	lVector ltrg;
 	lVector lKu;
 	start = clock();
-//	lKu = lK * lu;
-//	ltrg = lp.quotient(lKu);
-//	trg = ltrg.asVector();
-//	trg = trg.array().log();
+	lKu = lK * lu;
+	ltrg = lp.quotient(lKu);
+	trg = ltrg.asVector();
+	trg = trg.array().log();
 	end = clock();
 	cout << "time = " << (float)(end - start) / CLOCKS_PER_SEC << "sec.\n";
 	PRINT_MAT2(trg.block(0,0,10,1),"lnum");
 	
 //	lvect_demo();
-	lvect_quot_demo();
+//	lvect_quot_demo();
 	
 	return 0;
 }

@@ -38,11 +38,16 @@ lVector::lVector(const VectorXd d){
 lVector lVector::quotient(const lVector src){
 	lVector trg;
 	
-	VectorXi quot_exp = exponent - src.exponent;
-	VectorXd quot_coeff = coeff.array() / src.coeff.array();
-	VectorXi moveup = quot_coeff.array().log().cast<int>();
-	trg.exponent = quot_exp + moveup;
-	trg.coeff = quot_coeff.array() / moveup.cast<double>().array().exp();
+	/* safety version */
+//	VectorXi quot_exp = exponent - src.exponent;
+//	VectorXd quot_coeff = coeff.array() / src.coeff.array();
+//	VectorXi moveup = quot_coeff.array().log().cast<int>();
+//	trg.exponent = quot_exp + moveup;
+//	trg.coeff = quot_coeff.array() / moveup.cast<double>().array().exp();
+	
+	/* high-speed version */
+	trg.exponent = exponent - src.exponent;
+	trg.coeff = coeff.array() / src.coeff.array();
 	
 	return trg;
 }

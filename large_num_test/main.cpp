@@ -15,7 +15,7 @@ int main(int argc, const char * argv[]) {
 	//Initialize
 	srand((unsigned int)time(NULL));
 	
-	int dim = 3000;
+	int dim = 5000;
 	VectorXd log_p = VectorXd::Random(dim);
 	VectorXd p = log_p.array().exp();
 	VectorXd log_u = VectorXd::Random(dim);

@@ -27,6 +27,7 @@ public:
 	lVector(const VectorXd d);
 	lVector quotient(const lVector src);
 	VectorXd asVector();
+	VectorXd asLogVector();
 	lVector& operator = (const lVector& src);
 };
 
@@ -53,6 +54,10 @@ lVector lVector::quotient(const lVector src){
 }
 VectorXd lVector::asVector(){
 	VectorXd trg = coeff.array() * (exponent.cast<double>()).array().exp();
+	return trg;
+}
+VectorXd lVector::asLogVector(){
+	VectorXd trg = coeff.array().log() + (exponent.cast<double>()).array();
 	return trg;
 }
 lVector& lVector::operator = (const lVector& src){

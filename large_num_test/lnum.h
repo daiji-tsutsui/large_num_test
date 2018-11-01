@@ -80,9 +80,9 @@ lVector lMatrix::operator * (const lVector& src){
 	VectorXd d_exp_src = src.exponent.cast<double>();
 	MatrixXd prod_exp = d_exp.rowwise() + d_exp_src.transpose();
 	MatrixXd prod_coeff = coeff.array().rowwise() * src.coeff.array().transpose();
-	MatrixXi moveup = coeff.array().log().cast<int>();
-	prod_exp += moveup.cast<double>();
-	prod_coeff = prod_coeff.array() / moveup.cast<double>().array().exp();
+//	MatrixXi moveup = coeff.array().log().cast<int>();
+//	prod_exp += moveup.cast<double>();
+//	prod_coeff = prod_coeff.array() / moveup.cast<double>().array().exp();
 
 	//sum-up rowwisely to compute matrix multiply
 	VectorXd max_exp = prod_exp.rowwise().maxCoeff();
